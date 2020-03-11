@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:mysql://mysql-service:3306/clouderweb?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=CTT&allowPublicKeyRetrieval=true
+    username: root
+    password: clouderweb
+
+authserver:
+  url: http://web-auth:9000
+
+appserver:
+  url: http://app:80
+
+socketserver:
+  url: http://web-socket:9010
+
+staticserver:
+  url: http://35.243.101.217:9020
+  root-path: /opt/NABootWebStatic
