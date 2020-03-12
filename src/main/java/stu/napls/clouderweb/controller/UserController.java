@@ -23,9 +23,6 @@ import javax.servlet.http.HttpSession;
 public class UserController {
 
     @Resource
-    private UserService userService;
-
-    @Resource
     private SessionGetter sessionGetter;
 
     @ApiImplicitParams({
@@ -35,15 +32,6 @@ public class UserController {
     @GetMapping("/get/info")
     public Response getInfo(@ApiIgnore HttpSession httpSession) {
         return Response.success(sessionGetter.getUser(httpSession));
-    }
-
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
-                    required = true, dataType = "string", paramType = "header")})
-    @Auth
-    @GetMapping("/get/list")
-    public Response getList() {
-        return Response.success(userService.findAllUser());
     }
 
 }

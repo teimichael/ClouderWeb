@@ -1,6 +1,7 @@
 package stu.napls.clouderweb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.cloud.storage.Blob;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -11,26 +12,29 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "web_user")
+@Table(name = "web_item")
 @EntityListeners(AuditingEntityListener.class)
 @Data
-public class User {
+public class Item {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "uuid")
-    private String uuid;
+    @Column(name = "path")
+    private String path;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "avatar")
-    private String avatar;
+    @Column(name = "contentType")
+    private String contentType;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "depository", referencedColumnName = "id")
-    private Depository depository;
+    @Column(name = "size")
+    private Long size;
+
+    @Column(name = "md5")
+    private String md5;
 
     @JsonIgnore
     @Column(name = "status", columnDefinition = "integer default " + StatusCode.NORMAL)
@@ -44,4 +48,11 @@ public class User {
     @LastModifiedDate
     private Date updateDate;
 
+    public Item(String path, Blob blob) {
+        this.path = path;
+        this.name = blob.getName();
+        this.contentType = blob.getContentType();
+        this.size = blob.getSize();
+        this.md5 = blob.getMd5();
+    }
 }

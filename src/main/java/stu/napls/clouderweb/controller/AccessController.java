@@ -1,5 +1,9 @@
 package stu.napls.clouderweb.controller;
 
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.web.bind.annotation.*;
@@ -8,10 +12,13 @@ import stu.napls.clouderweb.auth.annotation.Auth;
 import stu.napls.clouderweb.auth.model.*;
 import stu.napls.clouderweb.auth.request.AuthRequest;
 import stu.napls.clouderweb.config.GlobalConstant;
+import stu.napls.clouderweb.core.dictionary.DepositoryCode;
 import stu.napls.clouderweb.core.dictionary.ResponseCode;
 import stu.napls.clouderweb.core.exception.Assert;
 import stu.napls.clouderweb.core.response.Response;
+import stu.napls.clouderweb.model.Depository;
 import stu.napls.clouderweb.model.User;
+import stu.napls.clouderweb.service.DepositoryService;
 import stu.napls.clouderweb.service.UserService;
 import stu.napls.clouderweb.util.SessionGetter;
 
@@ -31,6 +38,9 @@ public class AccessController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private DepositoryService depositoryService;
 
     @Resource
     private SessionGetter sessionGetter;
@@ -56,6 +66,16 @@ public class AccessController {
         Assert.notNull(authResponse, "Preregistering auth server failed.");
         Assert.isTrue(authResponse.getCode() == ResponseCode.SUCCESS, authResponse.getMessage());
         String uuid = authResponse.getData().toString();
+
+        // Create the bucket on GCP storage
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+        Bucket bucket = storage.create(BucketInfo.of(uuid));
+
+        Depository depository = new Depository();
+        depository.setCapacity(DepositoryCode.DEFAULT_CAPACITY);
+        depository.setUsedSpace(0L);
+        depository = depositoryService.update(depository);
+        user.setDepository(depository);
 
         user.setUuid(uuid);
         userService.update(user);
