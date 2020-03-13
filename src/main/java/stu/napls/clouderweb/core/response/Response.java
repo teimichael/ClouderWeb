@@ -1,7 +1,6 @@
 package stu.napls.clouderweb.core.response;
 
 import lombok.Data;
-import stu.napls.clouderweb.core.dictionary.ResponseCode;
 
 import java.io.Serializable;
 

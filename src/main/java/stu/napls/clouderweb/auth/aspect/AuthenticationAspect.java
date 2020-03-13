@@ -13,7 +13,7 @@ import stu.napls.clouderweb.auth.model.AuthResponse;
 import stu.napls.clouderweb.auth.model.AuthVerify;
 import stu.napls.clouderweb.auth.request.AuthRequest;
 import stu.napls.clouderweb.core.exception.Assert;
-import stu.napls.clouderweb.core.dictionary.ResponseCode;
+import stu.napls.clouderweb.core.response.ResponseCode;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

@@ -1,6 +1,7 @@
 package stu.napls.clouderweb.core.exception;
 
-import stu.napls.clouderweb.core.dictionary.ResponseCode;
+
+import stu.napls.clouderweb.core.response.ResponseCode;
 
 /**
  * @Author Tei Michael
