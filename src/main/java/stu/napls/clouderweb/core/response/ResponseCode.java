@@ -7,6 +7,7 @@ public interface ResponseCode {
     int FAILURE = -1;
     int NONEXISTENCE = -2;
     int ILLEGAL = -3;
+    int UNSUPPORTED = -4;
     int UNAUTHORIZED = HttpStatus.UNAUTHORIZED.value();
 
 }

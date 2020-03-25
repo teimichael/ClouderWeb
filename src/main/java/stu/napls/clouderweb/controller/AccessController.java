@@ -1,11 +1,8 @@
 package stu.napls.clouderweb.controller;
 
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 import stu.napls.clouderweb.auth.annotation.Auth;
@@ -17,8 +14,11 @@ import stu.napls.clouderweb.core.exception.Assert;
 import stu.napls.clouderweb.core.response.Response;
 import stu.napls.clouderweb.core.response.ResponseCode;
 import stu.napls.clouderweb.model.Depository;
+import stu.napls.clouderweb.model.Folder;
 import stu.napls.clouderweb.model.User;
+import stu.napls.clouderweb.model.vo.UserVO;
 import stu.napls.clouderweb.service.DepositoryService;
+import stu.napls.clouderweb.service.FolderService;
 import stu.napls.clouderweb.service.UserService;
 import stu.napls.clouderweb.util.SessionGetter;
 
@@ -43,6 +43,9 @@ public class AccessController {
     private DepositoryService depositoryService;
 
     @Resource
+    private FolderService folderService;
+
+    @Resource
     private SessionGetter sessionGetter;
 
     @PostMapping("/login")
@@ -57,7 +60,7 @@ public class AccessController {
     }
 
     @PostMapping("/register")
-    public Response register(@RequestParam String username, @RequestParam String password, @RequestBody User user) {
+    public Response register(@RequestParam String username, @RequestParam String password, @RequestBody UserVO userVO) {
         AuthPreregister authPreregister = new AuthPreregister();
         authPreregister.setUsername(username);
         authPreregister.setPassword(password);
@@ -67,14 +70,27 @@ public class AccessController {
         Assert.isTrue(authResponse.getCode() == ResponseCode.SUCCESS, authResponse.getMessage());
         String uuid = authResponse.getData().toString();
 
-        // Create the bucket on GCP storage
-        Storage storage = StorageOptions.getDefaultInstance().getService();
-        Bucket bucket = storage.create(BucketInfo.of(uuid));
+        User user = new User();
+        BeanUtils.copyProperties(userVO, user);
 
+        // Create the bucket on GCP storage
+//        Storage storage = StorageOptions.getDefaultInstance().getService();
+//        Bucket bucket = storage.create(BucketInfo.newBuilder(uuid)
+//                .setStorageClass(StorageClass.COLDLINE)
+//                .setLocation("ASIA-NORTHEAST1")
+//                .build());
+
+        // Create depository
         Depository depository = new Depository();
         depository.setCapacity(DepositoryCode.DEFAULT_CAPACITY);
         depository.setUsedSpace(0L);
         depository = depositoryService.update(depository);
+
+        // Create root folder
+        Folder rootFolder = folderService.update(new Folder(depository.getId(), "root", "root/", 0L));
+        depository.setRootFolder(rootFolder);
+        depository = depositoryService.update(depository);
+
         user.setDepository(depository);
 
         user.setUuid(uuid);
