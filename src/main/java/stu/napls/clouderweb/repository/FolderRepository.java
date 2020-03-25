@@ -6,7 +6,15 @@ import stu.napls.clouderweb.model.Folder;
 import java.util.List;
 
 public interface FolderRepository extends JpaRepository<Folder, Long> {
-    Folder findByUserIdAndPath(long userId, String path);
+    Folder findByParentFolderIdAndNameAndStatus(long parentFolderId, String name, int status);
 
-    List<Folder> findByUserIdAndParentFolderId(long userId, long parentFolderId);
+    Folder findByDepositoryIdAndPathAndStatus(long depositoryId, String path, int status);
+
+    List<Folder> findByDepositoryIdAndParentFolderIdAndStatus(long depositoryId, long parentFolderId, int status);
+
+    List<Folder> findByParentFolderIdAndStatus(long parentFolderId, int status);
+
+    Folder findByPathAndDepositoryIdAndStatus(String path, long depositoryId, int status);
+
+    void deleteByIdIn(List<Long> ids);
 }

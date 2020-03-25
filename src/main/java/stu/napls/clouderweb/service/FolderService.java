@@ -6,9 +6,20 @@ import java.util.List;
 
 public interface FolderService {
 
-    Folder create(Folder folder);
+    Folder findById(long id);
 
-    Folder findByUserIdAndPath(long userId, String path);
+    Folder update(Folder folder);
 
-    List<Folder> findByUserIdAndParentFolderId(long userId, long parentFolderId);
+    List<Folder> saveAll(List<Folder> folders);
+
+    void delete(Folder folder);
+
+    void deleteByIds(List<Long> ids);
+
+    Folder findByParentFolderIdAndName(long parentFolderId, String name);
+
+    Folder findByPathAndDepositoryId(String path, long depositoryId);
+
+    List<Folder> findByParentFolderId(long parentFolderId);
+
 }

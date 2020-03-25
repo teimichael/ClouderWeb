@@ -10,7 +10,6 @@ import stu.napls.clouderweb.core.dictionary.StatusCode;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
 
 @Entity
 @Table(name = "web_depository")
@@ -30,17 +29,20 @@ public class Depository {
     @Column(name = "used_space")
     private Long usedSpace;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private Set<Item> items;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "rootFolder", referencedColumnName = "id")
+    private Folder rootFolder;
 
     @JsonIgnore
     @Column(name = "status", columnDefinition = "integer default " + StatusCode.NORMAL)
     private int status;
 
+    @JsonIgnore
     @Column(name = "createDate")
     @CreatedDate
     private Date createDate;
 
+    @JsonIgnore
     @Column(name = "updateDate")
     @LastModifiedDate
     private Date updateDate;
